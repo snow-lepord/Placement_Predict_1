@@ -1,0 +1,26 @@
+============================================================
+CAMPUSPLACEMENTIQ — COHORT INGESTION & AUDIT REPORT
+============================================================
+
+Source Dataset: /Users/mehakarora/Desktop/ML/PythonProject2/data/raw/placement_raw.csv
+Total Student Records: 50,000
+Feature Dimensions:    32 columns
+Memory Footprint:      31.03 MB
+
+--- Missing Value Summary ---
+  - Workshops: 4,488 missing (8.98%)
+  - AptitudeTestScore: 4,029 missing (8.06%)
+  - SoftSkillsRating: 3,526 missing (7.05%)
+  - CodingTestScore: 2,976 missing (5.95%)
+  - MockInterviewScore: 4,957 missing (9.91%)
+
+--- Data Type Distribution ---
+  - float64: 16 columns
+  - int64: 8 columns
+  - str: 8 columns
+
+--- Target Variable Distribution (PlacementStatus) ---
+  - 1: 32,856 (65.71%)
+  - 0: 17,144 (34.29%)
+
+Audit completed successfully. Pipeline ready for heuristic baseline.

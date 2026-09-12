@@ -1,0 +1,8 @@
+Method used for the pipeline: Standardization
+Comparison on CGPA (first 5 rows):
+   original  standardized  min_max
+0      8.04         0.494    0.673
+1      9.00         1.088    0.833
+2      7.84         0.370    0.640
+3      7.06        -0.113    0.510
+4      9.20         1.212    0.867

@@ -1,0 +1,27 @@
+K-Means clustering, K swept from 2 to 10, fit on 35,000 students
+using 20 scaled, median-imputed numeric features.
+
+K, Inertia, Silhouette (sampled):
+ K       Inertia  Silhouette
+ 2 388487.677256    0.351613
+ 3 306329.670197    0.267680
+ 4 269409.843159    0.240879
+ 5 240495.726352    0.231624
+ 6 227445.297575    0.209482
+ 7 215287.453004    0.185042
+ 8 206825.242537    0.162955
+ 9 199130.657936    0.160381
+10 194542.122256    0.153886
+
+Optimal K by max silhouette: 2 (silhouette = 0.3516)
+Elbow-method K (max curvature): 3
+Recorded optimal K: 2
+
+Final cluster sizes (K=2):
+Cluster
+0    17775
+1    17225
+
+Placement rate by cluster (unsupervised structure vs ground truth):
+  Cluster 0: 98.1% placed
+  Cluster 1: 32.3% placed

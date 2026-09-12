@@ -1,0 +1,10 @@
+Regression (target: CodingTestScore)
+  Linear (no regularization): MSE=0.2198  R2=0.7677  zero-weight features=0
+  Ridge (L2): MSE=0.2198  R2=0.7677  zero-weight features=0
+  Lasso (L1): MSE=0.2228  R2=0.7646  zero-weight features=27
+  Elastic Net (L1 + L2): MSE=0.2205  R2=0.767  zero-weight features=25
+
+Logistic Regression (target: PlacementStatus)
+  L2 (Ridge-style): Accuracy=0.9224  zero-weight features=0
+  L1 (Lasso-style): Accuracy=0.9226  zero-weight features=3
+  Elastic Net: Accuracy=0.9226  zero-weight features=3

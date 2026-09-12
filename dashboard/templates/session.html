@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Session {{ '%02d' % session_id }} · {{ session.title }} · CampusPlacementIQ{% endblock %}
+
+{% block content %}
+
+  <!-- Milestone Header -->
+  <div class="session-page-header">
+    <div class="session-header-left">
+      <div class="session-breadcrumbs">
+        <span class="crumb-module">{% if current_module %}Module {{ current_module.id }}: {{ current_module.name }}{% else %}Curriculum{% endif %}</span>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-milestone">Milestone {{ '%02d' % session_id }}</span>
+      </div>
+      <h1 class="session-title-large">{{ session.title }}</h1>
+    </div>
+
+    <div class="session-nav-actions">
+      {% if session_id > 1 %}
+        <a href="{{ url_for('session_detail', session_id=session_id - 1) }}" class="btn-nav btn-prev">
+          ← Previous Session
+        </a>
+      {% endif %}
+      {% if session_id < 48 %}
+        <a href="{{ url_for('session_detail', session_id=session_id + 1) }}" class="btn-nav btn-next">
+          Next Session →
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Milestone Conceptual Overview & Deep Explanation Card -->
+  <div class="session-overview-card">
+    <div class="overview-top-row">
+      <div class="overview-badge-wrap">
+        <span class="overview-pill pill-concept">💡 Concept & Architecture Guide</span>
+        {% if session.built %}
+          <span class="overview-pill pill-status-built"><span class="pulse-dot"></span> Fully Executed & Verified</span>
+        {% else %}
+          <span class="overview-pill pill-status-roadmap">🚀 Future Roadmap Milestone</span>
+        {% endif %}
+      </div>
+      <span class="overview-session-tag">Session {{ '%02d' % session_id }} of 48</span>
+    </div>
+
+    <div class="overview-content-block">
+      <h2 class="overview-section-title">What is this session about?</h2>
+      <p class="overview-summary-text">{{ session.summary }}</p>
+    </div>
+
+    <div class="overview-grid">
+      {% if session.key_concepts %}
+        <div class="overview-box box-concepts">
+          <div class="box-head">🎯 Core ML Concepts Covered</div>
+          <div class="concept-chips">
+            {% for concept in session.key_concepts %}
+              <span class="concept-chip">{{ concept }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if session.methodology %}
+        <div class="overview-box box-methodology">
+          <div class="box-head">⚙️ Implementation Methodology</div>
+          <ul class="methodology-list">
+            {% for method in session.methodology %}
+              <li>{{ method }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if session.findings %}
+      <div class="overview-findings-banner">
+        <span class="findings-icon">📊</span>
+        <div class="findings-content">
+          <span class="findings-title">Key Empirical Insight & Metrics</span>
+          <p class="findings-desc">{{ session.findings }}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if session.built %}
+    <!-- Terminal Diagnostic Audit Console -->
+    {% if report_lines %}
+      <div class="console-card">
+        <div class="console-header">
+          <div class="console-window-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+            <span class="console-title">audit_output · {{ session.folder }}/{{ session.report }}</span>
+          </div>
+          <div class="console-actions">
+            <button id="copyBtn" class="console-copy-btn" onclick="copyConsoleReport()">
+              <span id="copyIcon">📋</span> Copy Audit Log
+            </button>
+            <span class="console-line-badge">{{ report_lines|length }} lines</span>
+          </div>
+        </div>
+        <div class="console-body">
+          <pre id="consoleOutput" class="console-text">{% for line in report_lines %}{{ line }}
+{% endfor %}</pre>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Visual Artifacts & Charts -->
+    {% if session.plots and session.plots|length > 0 %}
+      <div class="artifacts-card">
+        <div class="artifacts-header">
+          <h3 class="artifacts-title">📊 Generated Visual Artifacts & Diagnostic Charts</h3>
+          <span class="artifacts-count">{{ session.plots|length }} figures</span>
+        </div>
+        <div class="artifacts-grid">
+          {% for plot in session.plots %}
+            <div class="artifact-cell" onclick="openLightbox('{{ url_for('output_file', folder=session.folder, filename=plot) }}', '{{ plot }}')">
+              <img src="{{ url_for('output_file', folder=session.folder, filename=plot) }}" alt="{{ plot }}" loading="lazy">
+              <div class="artifact-caption">
+                <span>{{ plot }}</span>
+                <span class="zoom-pill">🔍 Zoom</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if not report_lines and not session.plots %}
+      <div class="empty-state-card">
+        <div class="empty-icon">📂</div>
+        <h3>Milestone Executed</h3>
+        <p>This session pipeline completed its primary data processing tasks without generating terminal log files.</p>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <!-- Upcoming Milestone Detailed Roadmap Card -->
+    <div class="upcoming-session-card">
+      <div class="upcoming-icon">🚀</div>
+      <div class="upcoming-status-badge">Curriculum Milestone {{ '%02d' % session_id }} · Roadmap Scheduled</div>
+      <h2 class="upcoming-title">{{ session.title }}</h2>
+      <p class="upcoming-desc">
+        {{ session.summary }}
+      </p>
+
+      {% if session.key_concepts %}
+        <div class="upcoming-concepts-wrap">
+          <span class="upcoming-concepts-label">Upcoming Core Competencies:</span>
+          <div class="concept-chips justify-center">
+            {% for concept in session.key_concepts %}
+              <span class="concept-chip chip-roadmap">{{ concept }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="upcoming-action-row">
+        <a href="{{ url_for('home') }}" class="btn-primary">Return to Platform Overview</a>
+        <a href="{{ url_for('session_detail', session_id=24) }}" class="btn-secondary">View Latest Active Milestone (Session 24)</a>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Lightbox Modal for Full-Resolution Charts -->
+  <div id="imageLightbox" class="lightbox-modal" onclick="closeLightbox()">
+    <div class="lightbox-container" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <h3 id="lightboxTitle" class="lightbox-title">Chart Preview</h3>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body">
+        <img id="lightboxImg" src="" alt="Expanded Plot">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copyConsoleReport() {
+      const text = document.getElementById("consoleOutput").innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copyBtn");
+        const icon = document.getElementById("copyIcon");
+        btn.style.background = "var(--accent-emerald)";
+        btn.style.color = "#042f2e";
+        icon.textContent = "✓";
+        setTimeout(() => {
+          btn.style.background = "rgba(99, 102, 241, 0.15)";
+          btn.style.color = "#c7d2fe";
+          icon.textContent = "📋";
+        }, 2000);
+      });
+    }
+
+    function openLightbox(src, title) {
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("lightboxTitle").textContent = title;
+      document.getElementById("imageLightbox").classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox() {
+      document.getElementById("imageLightbox").classList.remove("active");
+      document.body.style.overflow = "auto";
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+  </script>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+Rows before: 50000
+Rows after: 50000
+
+Outliers found per column (IQR method):
+CGPA: 0
+AttendancePercent: 0
+AptitudeTestScore: 0
+CodingTestScore: 408
+MockInterviewScore: 0

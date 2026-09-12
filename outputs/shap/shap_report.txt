@@ -1,0 +1,40 @@
+Explaining LightGBM (274 trees, Session 18's model)
+
+Top 10 by built-in (impurity-based) importance, normalized:
+  SoftSkillsRating: 0.0982
+  MockInterviewScore: 0.07
+  AptitudeTestScore: 0.0694
+  CodingTestScore: 0.0672
+  HistoryOfBacklogs: 0.0618
+  Projects: 0.0557
+  Internships: 0.0537
+  AttendancePercent: 0.0501
+  CGPA: 0.0463
+  SGPA_Sem5: 0.0435
+
+Top 10 by mean |SHAP value|, normalized:
+  Projects: 0.1257
+  SoftSkillsRating: 0.117
+  SGPA_Sem8: 0.0874
+  Internships: 0.0832
+  HistoryOfBacklogs: 0.0718
+  MockInterviewScore: 0.0692
+  SGPA_Sem7: 0.0648
+  SGPA_Sem6: 0.0583
+  SGPA_Sem5: 0.0404
+  AptitudeTestScore: 0.0394
+
+Spearman rank correlation between the two rankings: 0.9263
+
+Example row explained (validation row 0):
+  Predicted placement probability: 0.308
+  Base value: 2.3029 log-odds (0.9091 as a probability)
+
+Why use SHAP over built-in importance:
+  - Built-in importance is a single number per feature, averaged
+    over the whole training set, biased toward continuous/high-
+    cardinality features, and has no sign (no direction).
+  - SHAP gives one value per feature PER ROW, has a sign showing
+    which direction the feature pushed that specific prediction,
+    and the row's SHAP values sum exactly to (prediction - base
+    value) - so it's an actual explanation, not just a ranking.

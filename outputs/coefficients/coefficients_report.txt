@@ -1,0 +1,13 @@
+Linear regression: each 1 point of AptitudeTestScore adds 1.106 to CodingTestScore
+
+Top 10 features by coefficient size (logistic regression):
+  CGPA                           coef= -2.2946  odds_ratio= 0.1008  (decreases odds of placement)
+  HistoryOfBacklogs              coef= -2.1786  odds_ratio= 0.1132  (decreases odds of placement)
+  SoftSkillsRating               coef=  1.1509  odds_ratio= 3.1611  (increases odds of placement)
+  Internships                    coef=  1.0523  odds_ratio= 2.8642  (increases odds of placement)
+  Projects                       coef=  0.8604  odds_ratio=  2.364  (increases odds of placement)
+  SGPA_Sem5                      coef=  0.8332  odds_ratio= 2.3007  (increases odds of placement)
+  SGPA_Sem6                      coef=  0.7385  odds_ratio= 2.0927  (increases odds of placement)
+  SGPA_Sem7                      coef=  0.7197  odds_ratio= 2.0538  (increases odds of placement)
+  SGPA_Sem8                      coef=  0.6406  odds_ratio= 1.8976  (increases odds of placement)
+  Gender_Male                    coef=  0.6321  odds_ratio= 1.8816  (increases odds of placement)

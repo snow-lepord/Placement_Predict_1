@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Cohort Dataset Explorer (50,000 Records) · CampusPlacementIQ{% endblock %}
+
+{% block content %}
+
+  <!-- Page Header -->
+  <div class="dataset-page-header">
+    <div class="dataset-header-title-box">
+      <div class="dataset-tag-row">
+        <span class="dataset-pill">📁 Enterprise Database Explorer</span>
+        <span class="dataset-pill dataset-pill-highlight">{{ total_records|string }} Student Records</span>
+        <span class="dataset-pill">{{ total_cols }} Features</span>
+        <span class="dataset-pill pill-completeness"><span class="pulse-dot"></span> {{ completeness_pct }}% Verified Data Integrity</span>
+      </div>
+      <h1 class="dataset-main-title">Complete Student Cohort Dataset</h1>
+      <p class="dataset-sub-title">
+        High-performance visual explorer across the 50,000-student benchmark cohort. Inspect raw admissions, academic trajectories, skill assessments, and calibrated placement outcomes.
+      </p>
+    </div>
+
+    <!-- Actions & Download -->
+    <div class="dataset-header-actions">
+      <div class="dataset-toggle-group">
+        <a href="{{ url_for('dataset_viewer', ds='raw', per_page=per_page, q=search_query) }}"
+           class="btn-toggle {% if ds_type == 'raw' %}active{% endif %}">
+          📄 Raw Cohort Dataset
+        </a>
+        <a href="{{ url_for('dataset_viewer', ds='clean', per_page=per_page, q=search_query) }}"
+           class="btn-toggle {% if ds_type == 'clean' %}active{% endif %}">
+          🧼 Sanitized (Cleaned) Dataset
+        </a>
+      </div>
+
+      <a href="{{ url_for('dataset_download', ds=ds_type) }}" class="btn-download-csv">
+        ⬇ Download CSV Export
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Overview Strip with Visual Integrity Ring -->
+  <div class="dataset-kpi-strip">
+    <div class="kpi-mini-card">
+      <span class="kpi-mini-label">Total Student Cohort</span>
+      <span class="kpi-mini-val">{{ "{:,}".format(total_records) }}</span>
+      <span class="kpi-mini-sub">50,000 Verified Profiles</span>
+    </div>
+
+    <div class="kpi-mini-card">
+      <span class="kpi-mini-label">Filtered Matches</span>
+      <span class="kpi-mini-val text-cyan">{{ "{:,}".format(filtered_count) }}</span>
+      <span class="kpi-mini-sub">{% if search_query %}Matching "{{ search_query }}"{% else %}All records in scope{% endif %}</span>
+    </div>
+
+    <div class="kpi-mini-card">
+      <span class="kpi-mini-label">Overall Data Completeness</span>
+      <div class="kpi-completeness-row">
+        <span class="kpi-mini-val text-emerald">{{ completeness_pct }}%</span>
+        <div class="kpi-mini-bar">
+          <div class="kpi-mini-bar-fill" style="width: {{ completeness_pct }}%;"></div>
+        </div>
+      </div>
+      <span class="kpi-mini-sub">{{ "{:,}".format(completed_cells) }} / {{ "{:,}".format(total_cells) }} cells</span>
+    </div>
+
+    <div class="kpi-mini-card">
+      <span class="kpi-mini-label">Missing Values</span>
+      <span class="kpi-mini-val" style="color: {% if missing_count == 0 %}var(--accent-emerald){% else %}var(--accent-amber){% endif %};">
+        {{ "{:,}".format(missing_count) }}
+      </span>
+      <span class="kpi-mini-sub">{% if missing_count == 0 %}Zero missing cells{% else %}In 5 elective columns{% endif %}</span>
+    </div>
+
+    <div class="kpi-mini-card">
+      <span class="kpi-mini-label">ML Training Status</span>
+      <span class="kpi-mini-val text-indigo">100% Ready</span>
+      <span class="kpi-mini-sub">Session 08 Median Imputed</span>
+    </div>
+  </div>
+
+  <!-- Interactive Data Quality & Missing Value Inspection Drawer -->
+  {% if missing_breakdown %}
+    <div class="data-health-card">
+      <div class="health-card-header" onclick="toggleHealthDrawer()">
+        <div class="health-header-left">
+          <span class="health-icon">🛡️</span>
+          <div>
+            <div class="health-title">Dataset Health & Missingness Architecture Audit</div>
+            <div class="health-desc">Why do missing values exist, and how does the ML pipeline guarantee zero data leakage?</div>
+          </div>
+        </div>
+        <div class="health-header-right">
+          <button type="button" class="btn-drawer-toggle" id="drawerToggleBtn">
+            <span id="drawerToggleText">Show Column Audit</span> ▼
+          </button>
+        </div>
+      </div>
+
+      <div class="health-card-body" id="healthDrawerContent" style="display: none;">
+        <div class="health-callout-banner">
+          <span class="banner-badge">💡 Machine Learning Best Practice</span>
+          <p>
+            Missing values in this cohort are <strong>Missing at Random (MAR)</strong> due to voluntary extracurriculars and optional assessments.
+            To prevent <strong>data leakage</strong>, these values are intentionally preserved during Session 04 sanitization and Session 05 partitioning.
+            In <strong>Session 08</strong>, parameters are fit strictly on the training partition and applied outward, ensuring models receive 100% complete data without leakage.
+          </p>
+        </div>
+
+        <div class="missing-cols-grid">
+          {% for item in missing_breakdown %}
+            <div class="missing-col-item">
+              <div class="col-meta-head">
+                <span class="col-name">{{ item.column }}</span>
+                <span class="col-missing-tag">{{ item.missing_pct }}% unrecorded</span>
+              </div>
+
+              <div class="col-progress-track">
+                <div class="col-progress-fill" style="width: {{ item.present_pct }}%;"></div>
+              </div>
+
+              <div class="col-stats-row">
+                <span>Present: <strong>{{ "{:,}".format(item.present_count) }}</strong> ({{ item.present_pct }}%)</span>
+                <span>Missing: <strong>{{ "{:,}".format(item.missing_count) }}</strong></span>
+              </div>
+
+              <div class="col-domain-reason">
+                <span class="reason-label">Domain Factor:</span> {{ item.domain_reason }}
+              </div>
+
+              <div class="col-handling-note">
+                <span class="badge-check">✓</span> {{ item.imputation_handling }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Table Toolbar: Search & Pagination Controls -->
+  <div class="table-toolbar-box">
+    <form method="GET" action="{{ url_for('dataset_viewer') }}" class="table-search-form">
+      <input type="hidden" name="ds" value="{{ ds_type }}">
+      <input type="hidden" name="per_page" value="{{ per_page }}">
+      <div class="table-search-input-wrap">
+        <span class="search-symbol">🔍</span>
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Filter by StudentID, Stream, City, College Tier, Gender..." class="table-search-field">
+      </div>
+      <button type="submit" class="btn-search-submit">Search Records</button>
+      {% if search_query %}
+        <a href="{{ url_for('dataset_viewer', ds=ds_type, per_page=per_page) }}" class="btn-search-clear">Clear Filter</a>
+      {% endif %}
+    </form>
+
+    <div class="table-pagination-controls">
+      <span class="page-indicator">
+        Page <strong>{{ current_page }}</strong> of <strong>{{ total_pages }}</strong>
+      </span>
+
+      <div class="pagination-buttons">
+        {% if current_page > 1 %}
+          <a href="{{ url_for('dataset_viewer', ds=ds_type, page=1, per_page=per_page, q=search_query) }}" class="btn-page" title="First Page">««</a>
+          <a href="{{ url_for('dataset_viewer', ds=ds_type, page=current_page - 1, per_page=per_page, q=search_query) }}" class="btn-page" title="Previous Page">‹ Prev</a>
+        {% endif %}
+
+        {% if current_page < total_pages %}
+          <a href="{{ url_for('dataset_viewer', ds=ds_type, page=current_page + 1, per_page=per_page, q=search_query) }}" class="btn-page" title="Next Page">Next ›</a>
+          <a href="{{ url_for('dataset_viewer', ds=ds_type, page=total_pages, per_page=per_page, q=search_query) }}" class="btn-page" title="Last Page">»»</a>
+        {% endif %}
+      </div>
+
+      <div class="per-page-selector">
+        <label for="perPageSelect">Rows:</label>
+        <select id="perPageSelect" onchange="changePerPage(this.value)">
+          <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+          <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+          <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+          <option value="200" {% if per_page == 200 %}selected{% endif %}>200</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- High-End Data Table Container -->
+  <div class="data-table-wrapper">
+    <table class="dataset-table">
+      <thead>
+        <tr>
+          <th class="sticky-col-header">#</th>
+          {% for col in columns %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in records %}
+          <tr>
+            <td class="sticky-col-cell">{{ (current_page - 1) * per_page + loop.index }}</td>
+            {% for col in columns %}
+              <td>
+                {% if row[col] is none or row[col] != row[col] or row[col] == 'nan' or row[col] == '' %}
+                  <span class="badge-optional" title="Optional elective field — median imputed in Session 08">— Optional —</span>
+                {% elif col == 'PlacementStatus' %}
+                  {% if row[col] == 1 or row[col] == '1' or row[col] == 'Placed' %}
+                    <span class="badge-status badge-placed"><span class="pulse-dot"></span> Placed</span>
+                  {% else %}
+                    <span class="badge-status badge-unplaced">Not Placed</span>
+                  {% endif %}
+                {% elif col == 'CollegeTier' %}
+                  {% if row[col] == 'Tier1' or row[col] == 'Tier 1' or row[col] == 2 %}
+                    <span class="badge-tier tier-1">Tier 1</span>
+                  {% elif row[col] == 'Tier2' or row[col] == 'Tier 2' or row[col] == 1 %}
+                    <span class="badge-tier tier-2">Tier 2</span>
+                  {% else %}
+                    <span class="badge-tier tier-3">Tier 3</span>
+                  {% endif %}
+                {% elif col == 'CGPA' %}
+                  {% set cg = row[col]|float %}
+                  <span class="mono-cgpa {% if cg >= 8.5 %}cgpa-high{% elif cg >= 7.0 %}cgpa-mid{% else %}cgpa-low{% endif %}">
+                    {{ "%.2f"|format(cg) }}
+                  </span>
+                {% elif col == 'HistoryOfBacklogs' and (row[col] == 'Yes' or row[col] == 1) %}
+                  <span class="badge-backlog-yes">Active Backlogs</span>
+                {% elif col == 'HistoryOfBacklogs' and (row[col] == 'No' or row[col] == 0) %}
+                  <span class="badge-backlog-no">Clean Record</span>
+                {% elif col == 'Salary Package' %}
+                  <span class="cell-salary">{% if row[col]|float > 0 %}₹{{ "%.2f"|format(row[col]|float) }} L{% else %}—{% endif %}</span>
+                {% else %}
+                  {{ row[col] }}
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-bottom-nav">
+    <div class="bottom-info">
+      Showing records <strong>{{ (current_page - 1) * per_page + 1 }}</strong> to <strong>{{ [current_page * per_page, filtered_count]|min }}</strong> of <strong>{{ "{:,}".format(filtered_count) }}</strong> entries
+    </div>
+
+    <div class="pagination-buttons">
+      {% if current_page > 1 %}
+        <a href="{{ url_for('dataset_viewer', ds=ds_type, page=1, per_page=per_page, q=search_query) }}" class="btn-page">«« First</a>
+        <a href="{{ url_for('dataset_viewer', ds=ds_type, page=current_page - 1, per_page=per_page, q=search_query) }}" class="btn-page">‹ Prev</a>
+      {% endif %}
+
+      <span class="page-indicator-pill">Page {{ current_page }} / {{ total_pages }}</span>
+
+      {% if current_page < total_pages %}
+        <a href="{{ url_for('dataset_viewer', ds=ds_type, page=current_page + 1, per_page=per_page, q=search_query) }}" class="btn-page">Next ›</a>
+        <a href="{{ url_for('dataset_viewer', ds=ds_type, page=total_pages, per_page=per_page, q=search_query) }}" class="btn-page">Last »»</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    function changePerPage(val) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("per_page", val);
+      url.searchParams.set("page", "1");
+      window.location.href = url.toString();
+    }
+
+    function toggleHealthDrawer() {
+      const body = document.getElementById("healthDrawerContent");
+      const text = document.getElementById("drawerToggleText");
+      if (body.style.display === "none" || body.style.display === "") {
+        body.style.display = "block";
+        text.textContent = "Hide Column Audit";
+      } else {
+        body.style.display = "none";
+        text.textContent = "Show Column Audit";
+      }
+    }
+  </script>
+
+{% endblock %}

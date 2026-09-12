@@ -1,0 +1,6 @@
+Slope: 1.106
+Intercept: -18.693
+MSE: 150.582
+RMSE: 12.271
+MAE: 9.758
+R2 score: 0.657

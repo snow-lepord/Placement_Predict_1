@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}CampusPlacementIQ · AI Placement Intelligence Platform & Visual Gallery{% endblock %}
+
+{% block content %}
+
+  <!-- Hero Section with Radiant Mesh Aura -->
+  <section class="hero-section">
+    <div class="hero-gradient-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-tags-row">
+        <span class="hero-pill hero-pill-emerald"><span class="pulse-dot"></span> Live Intelligence Platform</span>
+        <span class="hero-pill">📊 50,000 Student Cohort</span>
+        <span class="hero-pill hero-pill-cyan">🏆 92.70% Peak LightGBM Accuracy</span>
+        <span class="hero-pill hero-pill-gold">⚡ Zero Data Leakage Pipeline</span>
+      </div>
+
+      <h1 class="hero-title">
+        Enterprise Campus Placement <span class="text-gradient">Intelligence Platform</span>
+      </h1>
+      <p class="hero-lead">
+        Comprehensive 48-session modular curriculum investigating student academic trajectories, test competencies,
+        IQR cleaning, feature scaling, one-hot encoding, logistic decision boundaries, boosted tree ensembles (XGBoost / LightGBM / CatBoost),
+        game-theoretic SHAP explainability, and unsupervised student clustering.
+      </p>
+
+      <!-- Quick Action Buttons including Dataset Viewer -->
+      <div class="hero-buttons-row">
+        <a href="{{ url_for('dataset_viewer') }}" class="btn-hero-primary">
+          📁 Explore Complete 50,000-Record Dataset
+        </a>
+        <a href="#simulator" class="btn-hero-secondary">
+          🔮 Test Placement Simulator
+        </a>
+        <a href="#gallery" class="btn-hero-secondary">
+          🖼️ Browse 22 Milestone Figures
+        </a>
+      </div>
+
+      <div class="hero-progress-box">
+        <div class="progress-title-row">
+          <span>Curriculum Mastery: <strong>{{ built_count }} of {{ total_count }} Sessions Active & Built</strong></span>
+          <span class="progress-badge">{{ completion_pct }}% Complete</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: {{ completion_pct }}%;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI Metric Cards Grid -->
+  <section class="stats-overview-grid">
+    <div class="stat-card card-indigo">
+      <div class="stat-icon-wrap">👥</div>
+      <div class="stat-data">
+        <div class="stat-value">50,000</div>
+        <div class="stat-label">Student Cohort Profiles</div>
+        <div class="stat-sub">32 Academic & Diagnostic Features</div>
+      </div>
+    </div>
+
+    <div class="stat-card card-cyan">
+      <div class="stat-icon-wrap">📋</div>
+      <div class="stat-data">
+        <div class="stat-value">98.75%</div>
+        <div class="stat-label">Raw Data Completeness</div>
+        <div class="stat-sub">Session 08 Median Imputed to 100%</div>
+      </div>
+    </div>
+
+    <div class="stat-card card-teal">
+      <div class="stat-icon-wrap">🎯</div>
+      <div class="stat-data">
+        <div class="stat-value">65.71%</div>
+        <div class="stat-label">Zero-Rule Baseline Accuracy</div>
+        <div class="stat-sub">Majority Class Benchmark (ROC: 0.50)</div>
+      </div>
+    </div>
+
+    <div class="stat-card card-emerald">
+      <div class="stat-icon-wrap">🚀</div>
+      <div class="stat-data">
+        <div class="stat-value">92.70%</div>
+        <div class="stat-label">Peak Ensemble Accuracy</div>
+        <div class="stat-sub">LightGBM (ROC-AUC: 0.9715)</div>
+      </div>
+    </div>
+
+    <div class="stat-card card-rose">
+      <div class="stat-icon-wrap">📚</div>
+      <div class="stat-data">
+        <div class="stat-value">{{ built_count }} / {{ total_count }}</div>
+        <div class="stat-label">Curriculum Milestones Built</div>
+        <div class="stat-sub">Sessions 01–24 Fully Operational</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Live ML Placement Simulator -->
+  <section id="simulator" class="simulator-section">
+    <div class="section-header-box">
+      <div>
+        <div class="section-badge-pill">PREDICTIVE COCKPIT</div>
+        <h2 class="section-title">🔮 Real-Time Student Placement Simulator</h2>
+        <p class="section-subtitle">Adjust candidate attributes to query the calibrated ensemble pipeline with instant probability output</p>
+      </div>
+      <span class="live-tag"><span class="pulse-dot"></span> LIVE INFERENCE</span>
+    </div>
+
+    <!-- Quick Preset Archetypes -->
+    <div class="simulator-presets-bar">
+      <span class="preset-label">⚡ Quick Presets:</span>
+      <button type="button" class="btn-preset" onclick="loadPreset(9.3, 92, 88, 90, 95, 0)">🌟 High Performer</button>
+      <button type="button" class="btn-preset" onclick="loadPreset(7.8, 70, 72, 65, 84, 0)">⚖️ Balanced Contender</button>
+      <button type="button" class="btn-preset" onclick="loadPreset(6.1, 40, 48, 42, 68, 1)">⚠️ At-Risk Candidate</button>
+    </div>
+
+    <div class="simulator-card">
+      <div class="sim-grid">
+        <div class="sim-input-group">
+          <label for="simCgpa">Cumulative CGPA: <span id="valCgpa" class="sim-val">7.8</span></label>
+          <input type="range" id="simCgpa" min="5.0" max="10.0" step="0.1" value="7.8" class="sim-slider">
+          <div class="slider-scale"><span>5.0</span><span>7.5</span><span>10.0</span></div>
+        </div>
+
+        <div class="sim-input-group">
+          <label for="simCoding">Coding Test Score: <span id="valCoding" class="sim-val">68</span>/100</label>
+          <input type="range" id="simCoding" min="0" max="100" step="1" value="68" class="sim-slider">
+          <div class="slider-scale"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+
+        <div class="sim-input-group">
+          <label for="simAptitude">Aptitude Test Score: <span id="valAptitude" class="sim-val">72</span>/100</label>
+          <input type="range" id="simAptitude" min="0" max="100" step="1" value="72" class="sim-slider">
+          <div class="slider-scale"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+
+        <div class="sim-input-group">
+          <label for="simInterview">Mock Interview Score: <span id="valInterview" class="sim-val">65</span>/100</label>
+          <input type="range" id="simInterview" min="0" max="100" step="1" value="65" class="sim-slider">
+          <div class="slider-scale"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+
+        <div class="sim-input-group">
+          <label for="simAttendance">Attendance (%): <span id="valAttendance" class="sim-val">82</span>%</label>
+          <input type="range" id="simAttendance" min="50" max="100" step="1" value="82" class="sim-slider">
+          <div class="slider-scale"><span>50%</span><span>75%</span><span>100%</span></div>
+        </div>
+
+        <div class="sim-input-group">
+          <label for="simBacklogs">History of Backlogs:</label>
+          <select id="simBacklogs" class="sim-select">
+            <option value="0">No Backlogs (Clean Record)</option>
+            <option value="1">Active / Past Backlogs</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sim-results-card">
+        <div class="sim-prob-display">
+          <div class="sim-prob-label">Predicted Placement Probability</div>
+          <div id="simProbNumber" class="sim-prob-large">--%</div>
+          <div class="sim-meter-track">
+            <div id="simMeterFill" class="sim-meter-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="sim-meta-display">
+          <div class="sim-meta-item">
+            <span class="meta-label">Classification Verdict:</span>
+            <span id="simClassBadge" class="meta-badge">--</span>
+          </div>
+          <div class="sim-meta-item">
+            <span class="meta-label">Model Confidence:</span>
+            <span id="simConfidence" class="meta-val">--</span>
+          </div>
+          <div class="sim-meta-item">
+            <span class="meta-label">Est. Compensation Package:</span>
+            <span id="simSalary" class="meta-salary">-- LPA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visual Analytics Showcase Gallery -->
+  <section id="gallery" class="gallery-section">
+    <div class="section-header-box">
+      <div>
+        <div class="section-badge-pill">RESEARCH ARTIFACTS</div>
+        <h2 class="section-title">🖼️ High-Resolution Visual Analytics Gallery</h2>
+        <p class="section-subtitle">{{ all_plots|length }} diagnostic figures generated across active curriculum sessions (click to expand)</p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="gallery-filters">
+        <button class="filter-pill active" onclick="filterGallery('All')">All ({{ all_plots|length }})</button>
+        <button class="filter-pill" onclick="filterGallery('EDA & Cohort')">EDA & Cohort</button>
+        <button class="filter-pill" onclick="filterGallery('Linear Models')">Linear Models</button>
+        <button class="filter-pill" onclick="filterGallery('Tree Ensembles')">Tree Ensembles</button>
+        <button class="filter-pill" onclick="filterGallery('Unsupervised')">Clustering</button>
+      </div>
+    </div>
+
+    <div class="gallery-grid">
+      {% for plot in all_plots %}
+        <div class="gallery-item" data-category="{{ plot.category }}" onclick="openLightbox('{{ url_for("output_file", folder=plot.folder, filename=plot.filename) }}', '{{ plot.title }}')">
+          <div class="gallery-img-wrap">
+            <img src="{{ url_for('output_file', folder=plot.folder, filename=plot.filename) }}" alt="{{ plot.title }}" loading="lazy">
+            <div class="gallery-hover-overlay">
+              <span class="zoom-icon">🔍 Click to Expand</span>
+            </div>
+          </div>
+          <div class="gallery-item-footer">
+            <span class="gallery-category-tag">{{ plot.category }}</span>
+            <div class="gallery-plot-title">{{ plot.title }}</div>
+            <div class="gallery-plot-session">Session {{ '%02d' % plot.session_id }}: {{ plot.session_title }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div id="imageLightbox" class="lightbox-modal" onclick="closeLightbox()">
+    <div class="lightbox-container" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <h3 id="lightboxTitle" class="lightbox-title">Chart Preview</h3>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body">
+        <img id="lightboxImg" src="" alt="Expanded Plot">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sliders = [
+      { id: "simCgpa", valId: "valCgpa", suffix: "" },
+      { id: "simCoding", valId: "valCoding", suffix: "" },
+      { id: "simAptitude", valId: "valAptitude", suffix: "" },
+      { id: "simInterview", valId: "valInterview", suffix: "" },
+      { id: "simAttendance", valId: "valAttendance", suffix: "" }
+    ];
+    sliders.forEach(s => {
+      const el = document.getElementById(s.id);
+      const valEl = document.getElementById(s.valId);
+      el.addEventListener("input", () => {
+        valEl.textContent = el.value + s.suffix;
+        triggerPredict();
+      });
+    });
+    document.getElementById("simBacklogs").addEventListener("change", triggerPredict);
+
+    function loadPreset(cgpa, coding, apt, interview, att, backlogs) {
+      document.getElementById("simCgpa").value = cgpa;
+      document.getElementById("valCgpa").textContent = cgpa;
+      document.getElementById("simCoding").value = coding;
+      document.getElementById("valCoding").textContent = coding;
+      document.getElementById("simAptitude").value = apt;
+      document.getElementById("valAptitude").textContent = apt;
+      document.getElementById("simInterview").value = interview;
+      document.getElementById("valInterview").textContent = interview;
+      document.getElementById("simAttendance").value = att;
+      document.getElementById("valAttendance").textContent = att;
+      document.getElementById("simBacklogs").value = backlogs;
+      triggerPredict();
+    }
+
+    async function triggerPredict() {
+      const payload = {
+        cgpa: parseFloat(document.getElementById("simCgpa").value),
+        coding_score: parseFloat(document.getElementById("simCoding").value),
+        aptitude_score: parseFloat(document.getElementById("simAptitude").value),
+        interview_score: parseFloat(document.getElementById("simInterview").value),
+        attendance: parseFloat(document.getElementById("simAttendance").value),
+        backlogs: parseInt(document.getElementById("simBacklogs").value)
+      };
+
+      try {
+        const res = await fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        const prob = (data.probability * 100).toFixed(1);
+        const probNum = document.getElementById("simProbNumber");
+        const fill = document.getElementById("simMeterFill");
+        const badge = document.getElementById("simClassBadge");
+        const conf = document.getElementById("simConfidence");
+        const salary = document.getElementById("simSalary");
+
+        probNum.textContent = prob + "%";
+        fill.style.width = prob + "%";
+        conf.textContent = data.confidence;
+        salary.textContent = "₹" + data.expected_salary_lpa + " LPA";
+
+        if (data.classification === "Placed") {
+          probNum.style.color = "var(--accent-emerald)";
+          fill.style.background = "linear-gradient(90deg, #059669, #10b981)";
+          badge.textContent = "✓ High Placement Likelihood";
+          badge.className = "meta-badge badge-placed";
+        } else {
+          probNum.style.color = "var(--accent-rose)";
+          fill.style.background = "linear-gradient(90deg, #e11d48, #f43f5e)";
+          badge.textContent = "✕ At-Risk / Intervention Needed";
+          badge.className = "meta-badge badge-unplaced";
+        }
+      } catch (err) {
+        console.error("Prediction error:", err);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", triggerPredict);
+
+    function filterGallery(category) {
+      const pills = document.querySelectorAll(".filter-pill");
+      pills.forEach(p => p.classList.remove("active"));
+      event.target.classList.add("active");
+
+      const items = document.querySelectorAll(".gallery-item");
+      items.forEach(it => {
+        if (category === "All" || it.getAttribute("data-category") === category) {
+          it.style.display = "flex";
+        } else {
+          it.style.display = "none";
+        }
+      });
+    }
+
+    function openLightbox(src, title) {
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("lightboxTitle").textContent = title;
+      document.getElementById("imageLightbox").classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeLightbox() {
+      document.getElementById("imageLightbox").classList.remove("active");
+      document.body.style.overflow = "auto";
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+  </script>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+AdaBoost (200 depth-1 stumps):
+  Train accuracy: 0.9245  Val accuracy: 0.9194
+
+Gradient Boosting (200 trees, depth=3, learning_rate=0.1):
+  Train accuracy: 0.9341  Val accuracy: 0.9234
+
+Validation accuracy vs learning rate (200 trees):
+  learning_rate=0.01: 0.912
+  learning_rate=0.05: 0.9242
+  learning_rate=0.1: 0.9234
+  learning_rate=0.5: 0.9194
+
+Comparison with Session 16:
+  Random Forest (Session 16, parallel/independent trees): 0.921
+  AdaBoost (sequential, reweighted rows):                 0.9194
+  Gradient Boosting (sequential, fits residuals):         0.9234
+
+Note: boosting trains trees sequentially (each depends on the
+previous one's output), so unlike Session 16's bagging/forest it
+cannot be parallelized across trees with n_jobs.

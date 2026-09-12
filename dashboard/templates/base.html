@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CampusPlacementIQ · AI Placement Intelligence Platform{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='10.0') }}">
+</head>
+<body class="app-body">
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="{{ url_for('home') }}" class="brand-link">
+          <div class="brand-badge">ML Platform</div>
+          <div class="brand-title-wrap">
+            <span class="brand-logo-icon">🎯</span>
+            <span class="brand-title">CampusPlacement<span class="text-highlight">IQ</span></span>
+          </div>
+          <p class="brand-subtitle">48-Session Modular ML Architecture</p>
+        </a>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="sessionSearchInput" placeholder="Filter 48 sessions..." autocomplete="off">
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('home') }}" class="nav-item-home {% if not session_id and request.endpoint == 'home' %}active{% endif %}">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Platform Overview & Gallery</span>
+        </a>
+
+        <a href="{{ url_for('dataset_viewer') }}" class="nav-item-dataset {% if request.endpoint == 'dataset_viewer' %}active{% endif %}">
+          <span class="nav-icon">📁</span>
+          <span class="nav-text">Complete Cohort Dataset</span>
+          <span class="dataset-count-badge">50k</span>
+        </a>
+
+        <div class="curriculum-roadmap">
+          {% for module in modules %}
+            <div class="module-section">
+              <div class="module-header">
+                <span class="module-badge">M{{ module.id }}</span>
+                <span class="module-title">{{ module.name }}</span>
+              </div>
+              <div class="module-list">
+                {% for sid in module.sessions %}
+                  {% set s = sessions[sid] %}
+                  <a href="{{ url_for('session_detail', session_id=sid) }}"
+                     class="session-link {% if not s.built %}upcoming{% endif %} {% if sid == session_id %}active{% endif %}"
+                     data-title="{{ s.title | lower }}">
+                    <span class="session-num">{{ '%02d' % sid }}</span>
+                    <span class="session-label" title="{{ s.title }}">{{ s.title }}</span>
+                    {% if s.built %}
+                      <span class="tag-status tag-built">built</span>
+                    {% else %}
+                      <span class="tag-status tag-soon">soon</span>
+                    {% endif %}
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-chip">
+          <span class="status-indicator"></span>
+          <span>Cohort: 50,000 Records</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      <header class="top-nav-bar">
+        <div class="top-nav-left">
+          <span class="platform-env-pill">⚡ Python 3.14 · Scikit-Learn · XGBoost · LightGBM · SHAP</span>
+        </div>
+        <div class="top-nav-right">
+          <a href="{{ url_for('home') }}" class="top-link">Overview</a>
+          <a href="{{ url_for('home') }}#simulator" class="top-link">Inference Simulator</a>
+          <a href="{{ url_for('home') }}#gallery" class="top-link">Visual Gallery</a>
+          <a href="{{ url_for('dataset_viewer') }}" class="btn-top-dataset">
+            📁 View Complete Dataset
+          </a>
+        </div>
+      </header>
+
+      <div class="content-container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <!-- Global Lightbox Modal for Chart Zoom -->
+  <div id="imageLightboxModal" class="lightbox-overlay" onclick="closeLightbox()">
+    <div class="lightbox-dialog" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span id="lightboxTitle" class="lightbox-title">Chart Preview</span>
+        <button class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body">
+        <img id="lightboxImage" src="" alt="Zoomed Chart">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("sessionSearchInput").addEventListener("input", function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const sessionLinks = document.querySelectorAll(".session-link");
+      sessionLinks.forEach(link => {
+        const title = link.getAttribute("data-title") || "";
+        const num = link.querySelector(".session-num").textContent;
+        if (title.includes(query) || num.includes(query)) {
+          link.style.display = "flex";
+        } else {
+          link.style.display = "none";
+        }
+      });
+    });
+
+    function openLightbox(src, title) {
+      document.getElementById("lightboxImage").src = src;
+      document.getElementById("lightboxTitle").textContent = title || "Chart Preview";
+      document.getElementById("imageLightboxModal").classList.add("open");
+    }
+    function closeLightbox() {
+      document.getElementById("imageLightboxModal").classList.remove("open");
+    }
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") closeLightbox();
+    });
+  </script>
+</body>
+</html>

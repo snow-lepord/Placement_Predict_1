@@ -1,0 +1,31 @@
+Comparing Model Tracks - each track's best configuration, refit
+and evaluated on the same validation split.
+
+Linear Models Track - Logistic Regression pipeline (Session 11):
+  Val accuracy: 0.9228
+  Val AUC:      0.9804
+  Val log loss: 0.1666
+  Fit time:     0.169s
+  Learned parameters: 49
+
+Tree-Based Models Track - LightGBM (Sessions 18-19):
+  Val accuracy: 0.9268
+  Val AUC:      0.9818
+  Val log loss: 0.1622
+  Fit time:     0.99s
+  Trees used:   274
+
+Accuracy gap between the two tracks' best models: 0.004
+Better validation accuracy: LightGBM (Tree-Based)
+
+Every model built so far (validation accuracy):
+  LightGBM: 0.9268
+  XGBoost: 0.926
+  Gradient Boosting (sklearn): 0.9238
+  CatBoost: 0.9236
+  Logistic Regression (Pipeline): 0.9228
+  Random Forest (200 Trees): 0.921
+  AdaBoost: 0.916
+  Logistic Regression (Plain): 0.9154
+  Decision Tree (Pruned): 0.908
+  Baseline Heuristic: 0.657

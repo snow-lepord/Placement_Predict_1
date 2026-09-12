@@ -1,0 +1,21 @@
+PART 1: worked example - 14 student dataset
+Root entropy: 0.9852
+Root Gini: 0.4898
+Root MSE: 0.2449
+
+CGPA <= 7.15 split:
+  Weighted entropy: 0.4636  Information Gain: 0.5216
+  Weighted Gini: 0.2143  Weighted MSE: 0.1071
+
+Candidate splits by Information Gain:
+  CGPA <= 7.15: 0.5216
+  Internships == 0: 0.2361
+  Aptitude <= 65: 0.2361
+  Backlogs == Yes: 0.1281
+
+PART 2: entropy vs Gini (real dataset, max_depth=6)
+  gini: 0.9076
+  entropy: 0.9098
+
+PART 3: pruning
+  Best ccp_alpha: 0.00022 (val accuracy = 0.9144)
