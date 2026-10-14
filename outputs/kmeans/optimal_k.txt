@@ -1,4 +1,0 @@
-Optimal K selected = 2
-Selection rule      = maximum silhouette score across K=2..10
-Silhouette at K*    = 0.3516
-Elbow-method K      = 3

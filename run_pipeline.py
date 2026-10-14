@@ -1,7 +1,8 @@
 """
 CampusPlacementIQ · Master Pipeline Orchestrator
-Executes all 22 curriculum sessions sequentially across Foundations, Linear Optimization,
-Tree Ensembles, and Unsupervised Clustering, followed by visual gallery generation.
+Executes all 48 curriculum sessions sequentially across Foundations, Linear Optimization,
+Tree Ensembles, Unsupervised Clustering, and Model Evaluation & Infrastructure,
+followed by visual gallery generation.
 """
 
 import os
@@ -13,38 +14,68 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 PYTHON_EXEC = sys.executable
 
 CURRICULUM_PIPELINE = [
-    # Module 1: Foundations
-    ("Session 01: Cohort Ingestion", "src/foundations_pipeline/s01_cohort_ingestion.py"),
-    ("Session 02: Heuristic Baseline", "src/foundations_pipeline/s02_heuristic_baseline.py"),
-    ("Session 03: Exploratory Profiling", "src/foundations_pipeline/s03_exploratory_profiling.py"),
-    ("Session 04: Data Sanitization", "src/foundations_pipeline/s04_data_sanitization.py"),
+    # Module 01: Foundations
+    ("Session 01: Cohort Ingestion", "src/module_01_foundations/01_cohort_ingestion.py"),
+    ("Session 02: Heuristic Baseline", "src/module_01_foundations/02_heuristic_baseline.py"),
+    ("Session 03: Exploratory Profiling", "src/module_01_foundations/03_exploratory_profiling.py"),
+    ("Session 04: Data Sanitization", "src/module_01_foundations/04_data_sanitization.py"),
 
-    # Module 2: Linear Optimization
-    ("Session 05: Data Partitioning", "src/linear_optimization/s05_data_partitioning_splits.py"),
-    ("Session 06: OLS Linear Regression", "src/linear_optimization/s06_ols_linear_regression.py"),
-    ("Session 07: Feature Standardization", "src/linear_optimization/s07_feature_standardization.py"),
-    ("Session 08: Categorical Imputation", "src/linear_optimization/s08_categorical_imputation.py"),
-    ("Session 09: Logistic Classification", "src/linear_optimization/s09_logistic_classifier_boundary.py"),
-    ("Session 10: Regularization Shrinkage", "src/linear_optimization/s10_penalty_regularization.py"),
-    ("Session 11: End-to-End Pipeline", "src/linear_optimization/s11_end_to_end_orchestration.py"),
-    ("Session 12: Coefficient Attribution", "src/linear_optimization/s12_interpretability_coefficients.py"),
+    # Module 02: Linear Optimization
+    ("Session 05: Data Partitioning", "src/module_02_linear_optimization/05_data_partitioning.py"),
+    ("Session 06: OLS Linear Regression", "src/module_02_linear_optimization/06_ols_linear_regression.py"),
+    ("Session 07: Feature Standardization", "src/module_02_linear_optimization/07_feature_standardization.py"),
+    ("Session 08: Categorical Imputation", "src/module_02_linear_optimization/08_categorical_imputation.py"),
+    ("Session 09: Logistic Classification", "src/module_02_linear_optimization/09_logistic_classification.py"),
+    ("Session 10: Regularization Shrinkage", "src/module_02_linear_optimization/10_penalty_regularization.py"),
+    ("Session 11: End-to-End Pipeline", "src/module_02_linear_optimization/11_pipeline_orchestration.py"),
+    ("Session 12: Coefficient Attribution", "src/module_02_linear_optimization/12_coefficient_attribution.py"),
 
-    # Module 3: Tree Ensembles
-    ("Session 13: Decision Trees", "src/tree_ensemble_analytics/s13_cart_decision_tree.py"),
-    ("Session 14: Pruning & Splitting", "src/tree_ensemble_analytics/s14_tree_pruning_split_criteria.py"),
-    ("Session 15: Bias-Variance Analysis", "src/tree_ensemble_analytics/s15_bias_variance_depth_tradeoff.py"),
-    ("Session 16: Random Forests & Bagging", "src/tree_ensemble_analytics/s16_bagging_random_forest.py"),
-    ("Session 17: Sequential Boosting", "src/tree_ensemble_analytics/s17_gradient_boosting_core.py"),
-    ("Session 18: Modern Boosted Trees", "src/tree_ensemble_analytics/s18_modern_boosted_ensembles.py"),
-    ("Session 19: SHAP Attribution", "src/tree_ensemble_analytics/s19_shap_feature_explanations.py"),
-    ("Session 20: Cross-Model Tournament", "src/tree_ensemble_analytics/s20_cross_model_tournament.py"),
+    # Module 03: Tree Ensembles
+    ("Session 13: Decision Trees", "src/module_03_tree_ensembles/13_cart_decision_tree.py"),
+    ("Session 14: Pruning & Splitting", "src/module_03_tree_ensembles/14_tree_pruning_splitting.py"),
+    ("Session 15: Bias-Variance Analysis", "src/module_03_tree_ensembles/15_bias_variance_depth.py"),
+    ("Session 16: Random Forests & Bagging", "src/module_03_tree_ensembles/16_random_forest_bagging.py"),
+    ("Session 17: Sequential Boosting", "src/module_03_tree_ensembles/17_sequential_boosting.py"),
+    ("Session 18: Modern Boosted Trees", "src/module_03_tree_ensembles/18_modern_boosted_trees.py"),
+    ("Session 19: SHAP Attribution", "src/module_03_tree_ensembles/19_shap_explainability.py"),
+    ("Session 20: Cross-Model Tournament", "src/module_03_tree_ensembles/20_cross_model_tournament.py"),
 
-    # Module 4: Unsupervised Segmentation
-    ("Session 21: K-Means Clustering", "src/unsupervised_segmentation/s21_kmeans_student_clustering.py"),
-    ("Session 24: Hierarchical Clustering", "src/unsupervised_segmentation/s24_hierarchical_dendrogram_clustering.py"),
+    # Module 04: Unsupervised Learning
+    ("Session 21: K-Means Clustering", "src/module_04_unsupervised_learning/21_kmeans_clustering.py"),
+    ("Session 22: K-Means++ & Scalability", "src/module_04_unsupervised_learning/22_kmeans_plusplus_scalability.py"),
+    ("Session 23: Principal Component Analysis", "src/module_04_unsupervised_learning/23_pca_decomposition.py"),
+    ("Session 24: Hierarchical Clustering", "src/module_04_unsupervised_learning/24_hierarchical_clustering.py"),
+    ("Session 25: Density-Based Clustering", "src/module_04_unsupervised_learning/25_dbscan_density.py"),
+    ("Session 26: t-SNE Manifold Visualization", "src/module_04_unsupervised_learning/26_tsne_manifold.py"),
+    ("Session 27: UMAP Manifold Projection", "src/module_04_unsupervised_learning/27_umap_manifold.py"),
+    ("Session 28: Anomaly & Outlier Detection", "src/module_04_unsupervised_learning/28_anomaly_detection.py"),
+    ("Session 29: Cluster-Augmented Features", "src/module_04_unsupervised_learning/29_cluster_augmented_features.py"),
 
-    # Showcase Figures
-    ("Showcase Visual Gallery", "src/showcase_figure_generator.py"),
+    # Module 05: Evaluation, Validation & Optimization
+    ("Session 30: Split Discipline & Data Leakage", "src/module_05_model_evaluation/30_split_discipline_leakage.py"),
+    ("Session 31: K-Fold & Stratified Cross-Validation", "src/module_05_model_evaluation/31_cross_validation_schemes.py"),
+    ("Session 32: Pipeline & Held-Out Test Evaluation", "src/module_05_model_evaluation/32_pipeline_test_evaluation.py"),
+    ("Session 33: Nested Stratified Cross-Validation", "src/module_05_model_evaluation/33_nested_stratified_cv.py"),
+    ("Session 34: ROC & PR Curve Diagnostics", "src/module_05_model_evaluation/34_roc_pr_curve_diagnostics.py"),
+    ("Session 35: Regression Loss Robustness", "src/module_05_model_evaluation/35_regression_loss_robustness.py"),
+    ("Session 36: Hyperparameter Search Schemes", "src/module_05_model_evaluation/36_hyperparameter_search_schemes.py"),
+    ("Session 37: Learning Curves & Complexity", "src/module_05_model_evaluation/37_learning_curves_complexity.py"),
+    ("Session 38: Bayesian TPE Optimization", "src/module_05_model_evaluation/38_bayesian_tpe_optimization.py"),
+    ("Session 39: Probability Calibration & Brier", "src/module_05_model_evaluation/39_probability_calibration_brier.py"),
+
+    # Module 06: ML Engineering & Production Serving
+    ("Session 40: Production Pipeline Packaging", "src/module_06_ml_engineering/40_production_pipeline_packaging.py"),
+    ("Session 41: Training-Serving Skew Detection", "src/module_06_ml_engineering/41_training_serving_skew.py"),
+    ("Session 42: Model Serialization & Portability", "src/module_06_ml_engineering/42_model_serialization_portability.py"),
+    ("Session 43: Microservice Inference Serving", "src/module_06_ml_engineering/43_microservice_inference_serving.py"),
+    ("Session 44: Automated ML Testing Suite", "src/module_06_ml_engineering/44_automated_ml_testing.py"),
+    ("Session 45: Data & Concept Drift Monitoring", "src/module_06_ml_engineering/45_data_concept_drift_monitoring.py"),
+    ("Session 46: Experiment Tracking & Registry", "src/module_06_ml_engineering/46_experiment_tracking_registry.py"),
+    ("Session 47: Docker & CI/CD Deployment Audit", "src/module_06_ml_engineering/47_containerization_cicd_pipeline.py"),
+    ("Session 48: Executive Capstone Summary", "src/module_06_ml_engineering/48_executive_capstone_summary.py"),
+
+    # Visual Analytics Showcase
+    ("Showcase Visual Gallery", "src/module_05_visual_analytics/showcase_figure_generator.py"),
 ]
 
 

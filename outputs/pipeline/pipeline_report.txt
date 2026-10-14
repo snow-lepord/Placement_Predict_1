@@ -1,6 +1,0 @@
-Pipeline validation accuracy: 0.9228
-Preprocessing steps:
-  Numeric columns (20): SimpleImputer(median) -> StandardScaler
-  Ordinal columns (2): SimpleImputer(most_frequent) -> OrdinalEncoder
-  Categorical columns (6): SimpleImputer(most_frequent) -> OneHotEncoder
-Model: LogisticRegression(max_iter=1000)

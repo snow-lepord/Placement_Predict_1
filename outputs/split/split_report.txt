@@ -1,3 +1,0 @@
-Train: 35000
-Validation: 5000
-Test: 10000

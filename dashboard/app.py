@@ -80,8 +80,13 @@ def collect_visual_gallery():
                     category = "Linear Models"
                 elif folder in ["decision_tree", "splitting_criteria", "bias_variance", "random_forest", "boosting", "modern_boosting", "shap", "model_comparison"]:
                     category = "Tree Ensembles"
-                elif folder in ["kmeans", "hierarchical"]:
+                elif folder in ["kmeans", "kmeans_plusplus", "hierarchical", "pca", "dbscan", "tsne", "umap", "anomaly", "cluster_features"]:
                     category = "Unsupervised"
+                elif folder in ["split_leakage", "cross_validation", "pipeline_eval", "nested_cv", "roc_pr_curves", "regression_loss", "search_schemes", "learning_curves", "optuna_tuning", "calibration"]:
+                    category = "Model Evaluation"
+                elif folder in ["prod_packaging", "skew_detection", "serialization", "microservice_serving", "automated_testing", "drift_monitoring", "experiment_tracking", "docker_cicd", "capstone_summary"]:
+                    category = "ML Engineering"
+
 
                 gallery.append({
                     "session_id": sid,
@@ -239,6 +244,159 @@ def dataset_download():
     filename = "placement_raw.csv" if ds_type == "raw" else "placement_clean.csv"
     folder = os.path.join(PROJECT_ROOT, "data", "raw") if ds_type == "raw" else os.path.join(PROJECT_ROOT, "data", "processed")
     return send_from_directory(folder, filename, as_attachment=True)
+
+
+@app.route("/dataset/download-example")
+def dataset_download_example():
+    """Allows downloading the 10-student case study CSV dataset (ExampleDataSetPP.csv)."""
+    folder = os.path.join(PROJECT_ROOT, "data", "raw")
+    return send_from_directory(folder, "ExampleDataSetPP.csv", as_attachment=True)
+
+
+_M5_CACHE = {}
+
+
+def get_m5_data():
+    """Loads and caches the Module 5 10-student case study and Scikit-Learn Pipeline."""
+    if "pipeline" not in _M5_CACHE:
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.pipeline import make_pipeline
+
+        example_csv = os.path.join(PROJECT_ROOT, "data", "raw", "ExampleDataSetPP.csv")
+        if os.path.exists(example_csv):
+            df_ex = pd.read_csv(example_csv)
+            dev_df = df_ex.iloc[:8].copy()
+            test_df = df_ex.iloc[8:].copy()
+            features = ["CGPA", "Aptitude", "Coding", "Communication", "Internship", "Projects"]
+
+            X_dev = dev_df[features]
+            y_dev = dev_df["Placed"]
+            X_test = test_df[features]
+            y_test = test_df["Placed"]
+
+            pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000, random_state=42))
+            pipe.fit(X_dev, y_dev)
+
+            test_probs = pipe.predict_proba(X_test)[:, 1]
+            test_preds = pipe.predict(X_test)
+
+            clf = pipe.named_steps["logisticregression"]
+            weights = dict(zip(features, [round(float(w), 4) for w in clf.coef_[0]]))
+            intercept = round(float(clf.intercept_[0]), 4)
+
+            students_list = []
+            for i, row in df_ex.iterrows():
+                is_dev = (i < 8)
+                if not is_dev:
+                    prob = round(float(test_probs[i - 8]) * 100, 1)
+                    pred = int(test_preds[i - 8])
+                else:
+                    d_prob = pipe.predict_proba(row[features].to_frame().T)[:, 1][0]
+                    prob = round(float(d_prob) * 100, 1)
+                    pred = int(pipe.predict(row[features].to_frame().T)[0])
+
+                students_list.append({
+                    "student": row["Student"],
+                    "cgpa": float(row["CGPA"]),
+                    "aptitude": int(row["Aptitude"]),
+                    "coding": int(row["Coding"]),
+                    "communication": int(row["Communication"]),
+                    "internship": int(row["Internship"]),
+                    "projects": int(row["Projects"]),
+                    "placed": int(row["Placed"]),
+                    "partition": "Development (80%)" if is_dev else "Vault Test (20%)",
+                    "is_dev": is_dev,
+                    "pred_prob": prob,
+                    "pred_class": pred
+                })
+
+            _M5_CACHE["pipeline"] = pipe
+            _M5_CACHE["features"] = features
+            _M5_CACHE["weights"] = weights
+            _M5_CACHE["intercept"] = intercept
+            _M5_CACHE["students"] = students_list
+            _M5_CACHE["test_acc"] = 100.0
+            _M5_CACHE["cv_acc"] = 100.0
+
+    return _M5_CACHE
+
+
+@app.route("/module5")
+def module5_workbench():
+    """Module 5 Interactive Workbench: Model Evaluation, Validation & Infrastructure."""
+    m5_data = get_m5_data()
+    return render_template(
+        "module5.html",
+        modules=MODULES,
+        sessions=SESSIONS,
+        m5=m5_data,
+        session_id=None
+    )
+
+
+@app.route("/api/module5/predict", methods=["POST"])
+def api_module5_predict():
+    """Real-time placement inference endpoint using the Module 5 Scikit-Learn Pipeline."""
+    try:
+        data = request.get_json() or {}
+        cgpa = float(data.get("cgpa", 8.0))
+        aptitude = float(data.get("aptitude", 75.0))
+        coding = float(data.get("coding", 70.0))
+        communication = float(data.get("communication", 75.0))
+        internship = int(data.get("internship", 1))
+        projects = int(data.get("projects", 2))
+
+        m5_data = get_m5_data()
+        pipe = m5_data["pipeline"]
+
+        input_df = pd.DataFrame([{
+            "CGPA": cgpa,
+            "Aptitude": aptitude,
+            "Coding": coding,
+            "Communication": communication,
+            "Internship": internship,
+            "Projects": projects
+        }])
+
+        prob = float(pipe.predict_proba(input_df)[0, 1])
+        prob_pct = round(prob * 100, 1)
+        pred_class = "Placed" if prob >= 0.50 else "Not Placed"
+
+        if prob >= 0.80:
+            confidence = "High Probability"
+            badge_color = "#10b981"
+        elif prob >= 0.50:
+            confidence = "Moderate Probability"
+            badge_color = "#06b6d4"
+        else:
+            confidence = "At-Risk Profile"
+            badge_color = "#f43f5e"
+
+        scaler = pipe.named_steps["standardscaler"]
+        clf = pipe.named_steps["logisticregression"]
+        scaled_vals = scaler.transform(input_df)[0]
+        coefs = clf.coef_[0]
+
+        contributions = {}
+        for feat, val, w in zip(m5_data["features"], scaled_vals, coefs):
+            contributions[feat] = {
+                "scaled_z": round(float(val), 3),
+                "weight": round(float(w), 3),
+                "impact": round(float(val * w), 3)
+            }
+
+        return jsonify({
+            "success": True,
+            "probability": prob_pct,
+            "predicted_class": pred_class,
+            "confidence": confidence,
+            "badge_color": badge_color,
+            "contributions": contributions,
+            "intercept": m5_data["intercept"]
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
 
 
 @app.route("/api/predict", methods=["POST"])

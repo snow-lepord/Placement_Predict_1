@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='10.0') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='12.0') }}">
 </head>
 <body class="app-body">
   <div class="app-layout">
@@ -42,11 +42,17 @@
           <span class="dataset-count-badge">50k</span>
         </a>
 
+        <a href="{{ url_for('module5_workbench') }}" class="nav-item-dataset {% if request.endpoint == 'module5_workbench' %}active{% endif %}" style="background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.3);">
+          <span class="nav-icon">🎓</span>
+          <span class="nav-text" style="color: #a5b4fc; font-weight: 700;">Module 5 Workbench</span>
+          <span class="dataset-count-badge" style="background: var(--accent-indigo); color: #fff;">Case Study</span>
+        </a>
+
         <div class="curriculum-roadmap">
           {% for module in modules %}
             <div class="module-section">
-              <div class="module-header">
-                <span class="module-badge">M{{ module.id }}</span>
+              <div class="module-header module-color-{{ module.id }}">
+                <span class="module-badge">MODULE 0{{ module.id }}</span>
                 <span class="module-title">{{ module.name }}</span>
               </div>
               <div class="module-list">
@@ -70,10 +76,18 @@
         </div>
       </nav>
 
+      <!-- Sidebar Developer Attribution Corner -->
       <div class="sidebar-footer">
+        <div class="sidebar-dev-card" onclick="openLightbox('{{ url_for('static', filename='img/mehak_arora_full.jpg') }}', 'Made & Developed by : Mehak Arora')">
+          <img src="{{ url_for('static', filename='img/mehak_arora.jpg') }}" alt="Mehak Arora" class="sidebar-dev-avatar">
+          <div class="sidebar-dev-info">
+            <span class="sidebar-dev-tag">MADE & DEVELOPED BY</span>
+            <span class="sidebar-dev-name">Mehak Arora</span>
+          </div>
+        </div>
         <div class="system-status-chip">
           <span class="status-indicator"></span>
-          <span>Cohort: 50,000 Records</span>
+          <span>Cohort: 50,000 Records · 48/48 Built</span>
         </div>
       </div>
     </aside>
@@ -86,11 +100,17 @@
         </div>
         <div class="top-nav-right">
           <a href="{{ url_for('home') }}" class="top-link">Overview</a>
-          <a href="{{ url_for('home') }}#simulator" class="top-link">Inference Simulator</a>
+          <a href="{{ url_for('home') }}#modules-showcase" class="top-link" style="color: #34d399; font-weight: 700;">📚 6 Modules</a>
+          <a href="{{ url_for('module5_workbench') }}" class="top-link" style="color: #a5b4fc; font-weight: 700;">🎓 Module 5 Workbench</a>
+          <a href="{{ url_for('home') }}#simulator" class="top-link">Simulator</a>
           <a href="{{ url_for('home') }}#gallery" class="top-link">Visual Gallery</a>
           <a href="{{ url_for('dataset_viewer') }}" class="btn-top-dataset">
             📁 View Complete Dataset
           </a>
+          <div class="topnav-dev-pill" onclick="openLightbox('{{ url_for('static', filename='img/mehak_arora_full.jpg') }}', 'Made & Developed by : Mehak Arora')" title="Click to view developer photo">
+            <img src="{{ url_for('static', filename='img/mehak_arora.jpg') }}" alt="Mehak Arora" class="topnav-dev-img">
+            <span>By : <strong>Mehak Arora</strong></span>
+          </div>
         </div>
       </header>
 
@@ -98,6 +118,19 @@
         {% block content %}{% endblock %}
       </div>
     </main>
+  </div>
+
+  <!-- Floating Bottom-Right "Made & Developed By : Mehak Arora" Corner Badge -->
+  <div class="floating-dev-corner" onclick="openLightbox('{{ url_for('static', filename='img/mehak_arora_full.jpg') }}', 'Made and Developed by : Mehak Arora')">
+    <div class="floating-dev-avatar-wrap">
+      <img src="{{ url_for('static', filename='img/mehak_arora.jpg') }}" alt="Mehak Arora" class="floating-dev-avatar">
+      <span class="floating-dev-online"></span>
+    </div>
+    <div class="floating-dev-text">
+      <span class="floating-dev-label">MADE &amp; DEVELOPED BY :</span>
+      <span class="floating-dev-name">Mehak Arora</span>
+      <span class="floating-dev-role">ML Architecture &amp; AI Engineering</span>
+    </div>
   </div>
 
   <!-- Global Lightbox Modal for Chart Zoom -->
@@ -129,12 +162,26 @@
     });
 
     function openLightbox(src, title) {
-      document.getElementById("lightboxImage").src = src;
-      document.getElementById("lightboxTitle").textContent = title || "Chart Preview";
-      document.getElementById("imageLightboxModal").classList.add("open");
+      const modal1 = document.getElementById("imageLightboxModal");
+      if (modal1) {
+        document.getElementById("lightboxImage").src = src;
+        document.getElementById("lightboxTitle").textContent = title || "Preview";
+        modal1.classList.add("open");
+      }
+      const modal2 = document.getElementById("imageLightbox");
+      if (modal2) {
+        document.getElementById("lightboxImg").src = src;
+        document.getElementById("lightboxTitle").textContent = title || "Preview";
+        modal2.classList.add("active");
+      }
+      document.body.style.overflow = "hidden";
     }
     function closeLightbox() {
-      document.getElementById("imageLightboxModal").classList.remove("open");
+      const modal1 = document.getElementById("imageLightboxModal");
+      if (modal1) modal1.classList.remove("open");
+      const modal2 = document.getElementById("imageLightbox");
+      if (modal2) modal2.classList.remove("active");
+      document.body.style.overflow = "auto";
     }
     document.addEventListener("keydown", function(e) {
       if (e.key === "Escape") closeLightbox();

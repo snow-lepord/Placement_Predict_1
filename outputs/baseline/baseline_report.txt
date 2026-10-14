@@ -1,2 +1,0 @@
-Majority class: 1
-Baseline accuracy: 0.6571
